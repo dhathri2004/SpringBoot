@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Take Quiz</title>
+    <script>
+        async function loadQuiz() {
+            const response = await fetch("http://localhost:8080/quiz/questions");
+            const questions = await response.json();
+            const quizContainer = document.getElementById("quizContainer");
+
+            quizContainer.innerHTML = ""; // Clear previous content
+
+            questions.forEach((q, index) => {
+                const div = document.createElement("div");
+                div.innerHTML = `<p>${index + 1}. ${q.question}</p>
+                    ${q.options.map((opt, i) => `<input type="radio" name="q${index}" value="${i}"> ${opt}<br>`).join("")}`;
+                quizContainer.appendChild(div);
+            });
+
+            document.getElementById("submitQuiz").style.display = "block"; // Show submit button
+        }
+
+        async function submitQuiz() {
+            const questions = document.querySelectorAll("#quizContainer div");
+            let answers = [];
+
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                answers.push(selected ? parseInt(selected.value) : -1); // -1 for unanswered
+            });
+
+            const response = await fetch("http://localhost:8080/quiz/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ answers })
+            });
+
+            const result = await response.text();
+            alert(result);
+        }
+    </script>
+</head>
+<body onload="loadQuiz()">
+    <h2>Take the Quiz</h2>
+    <div id="quizContainer"></div>
+    <button id="submitQuiz" onclick="submitQuiz()" style="display:none;">Submit Quiz</button>
+</body>
+</html>

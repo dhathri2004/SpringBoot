@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Question</title>
+    <script>
+        async function addQuestion() {
+            const question = document.getElementById("question").value;
+            const options = [
+                document.getElementById("opt1").value,
+                document.getElementById("opt2").value,
+                document.getElementById("opt3").value,
+                document.getElementById("opt4").value
+            ];
+            const correctOption = document.getElementById("correctOption").value;
+            const category = document.getElementById("category").value;
+            
+            const newQuestion = { question, options, correctOption, category };
+
+            await fetch("http://localhost:8080/admin/add-question", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newQuestion)
+            });
+            alert("Question added successfully!");
+        }
+    </script>
+</head>
+<body>
+    <h2>Add a New Question</h2>
+    <input type="text" id="question" placeholder="Question" /><br>
+    <input type="text" id="opt1" placeholder="Option 1" /><br>
+    <input type="text" id="opt2" placeholder="Option 2" /><br>
+    <input type="text" id="opt3" placeholder="Option 3" /><br>
+    <input type="text" id="opt4" placeholder="Option 4" /><br>
+    <input type="number" id="correctOption" placeholder="Correct Option (0-3)" /><br>
+    <input type="text" id="category" placeholder="Category" /><br>
+    <button onclick="addQuestion()">Add Question</button>
+</body>
+</html>
